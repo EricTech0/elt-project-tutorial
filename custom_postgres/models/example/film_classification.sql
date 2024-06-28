@@ -1,0 +1,1 @@
+{{ generate_films_with_ratings() }}

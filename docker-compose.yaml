@@ -46,6 +46,28 @@ services:
       - DESTINATION_DB_NAME=${DESTINATION_DB_NAME}
       - DESTINATION_DB_HOST=${DESTINATION_DB_HOST}
 
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.4.7
+    command:
+      [
+        "run",
+        "--profiles-dir",
+        "/root",
+        "--project-dir",
+        "/dbt",
+        "--full-refresh",
+      ]
+    networks:
+      - elt_network
+    volumes:
+      - ./custom_postgres:/dbt
+      - ~/.dbt:/root
+    depends_on:
+      elt_script:
+        condition: service_completed_successfully
+    environment:
+      DBT_PROFILE: default
+      DBT_TARGET: dev
 networks:
   elt_network:
     driver: bridge
